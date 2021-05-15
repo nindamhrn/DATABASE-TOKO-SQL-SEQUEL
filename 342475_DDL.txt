@@ -1,0 +1,117 @@
+CREATE TABLE Member (
+    id_member VARCHAR2 (10) NOT NULL ENABLE,
+    no_ktp VARCHAR2 (20),
+    nama_member VARCHAR2(20),
+    tanggal_lahir DATE,
+    alamat VARCHAR2 (50) ,
+    jenis_kelamin VARCHAR(10),
+    CONSTRAINT MEMBER_PK PRIMARY KEY (ID_MEMBER) ENABLE
+) ;
+CREATE TABLE Barang (
+    kode_barang VARCHAR2 (10) NOT NULL,
+    kategori VARCHAR2 (15),
+    jenis_barang VARCHAR (20),
+    merk VARCHAR2 (10),
+    stock NUMBER,
+    harga_beli NUMBER,
+    harga_jual NUMBER,
+    CONSTRAINT BARANG_PK PRIMARY KEY (kode_barang) ENABLE
+);
+CREATE TABLE MEMBELI (
+    id_membeli VARCHAR (10) NOT NULL ENABLE,
+    kode_barang VARCHAR2 (10),
+    id_member VARCHAR2 (10),
+    CONSTRAINT MEMBELI_PK PRIMARY KEY (id_membeli) ENABLE,
+    CONSTRAINT KodeBarang_FK FOREIGN KEY (kode_barang)
+    REFERENCES BARANG (kode_barang) ON DELETE CASCADE ENABLE, 
+    CONSTRAINT MEMBER_FK2 FOREIGN KEY (id_member)
+    REFERENCES MEMBER (id_member) ON DELETE CASCADE ENABLE
+);
+CREATE TABLE Supplier (
+    kode_penyuplai VARCHAR2 (10) NOT NULL,
+    nip VARCHAR2 (20),
+    nama_penyuplai VARCHAR2 (20),
+    jenis_kelamin VARCHAR2 (1),
+    tanggal_lahir DATE,
+    no_telp VARCHAR2 (20),
+    CONSTRAINT KODEPENYUPLAI_PK PRIMARY KEY (Kode_Penyuplai) ENABLE
+);
+CREATE TABLE TRANSAKSI (
+    id_transaksi VARCHAR2 (10) NOT NULL,
+    kode_penyuplai VARCHAR2 (10),
+    tanggal_transaksi DATE,
+    TotalPengeluaran NUMBER,
+    CONSTRAINT idTransaksi_PK PRIMARY KEY (id_transaksi) ENABLE,
+    CONSTRAINT KodePenyuplai_FK FOREIGN KEY (kode_penyuplai)
+    REFERENCES SUPPLIER ON DELETE CASCADE ENABLE
+);
+CREATE TABLE DETIL_TRANSAKSI(
+    id_transaksi VARCHAR2 (10),
+    kode_barang VARCHAR2 (10),
+    jumlahItem NUMBER,
+    CONSTRAINT DETIL_TRANSAKSI_FK FOREIGN KEY (ID_TRANSAKSI)
+    REFERENCES TRANSAKSI (ID_TRANSAKSI) ON DELETE CASCADE ENABLE,
+	CONSTRAINT DETIL_TRANSAKSI_FK2 FOREIGN KEY (KODE_BARANG)
+    REFERENCES BARANG (KODE_BARANG) ON DELETE CASCADE ENABLE 
+);
+CREATE TABLE Pegawai (
+    NIP_P VARCHAR2 (20) NOT NULL,
+    id_manager VARCHAR2 (10),
+    nama_pegawai VARCHAR2 (20),
+    jenis_kelamin VARCHAR2 (10),
+    alamat VARCHAR2 (20),
+    no_telp VARCHAR2 (20),
+    CONSTRAINT Pegawai_PK PRIMARY KEY (NIP_P) ENABLE,
+    CONSTRAINT idManager_FK FOREIGN KEY (id_manager)
+    REFERENCES Manager (id_manager) ON DELETE CASCADE ENABLE
+);
+CREATE TABLE MENGAWASI (
+    id_pengawasan VARCHAR2 (20) NOT NULL,
+    id_transaksi VARCHAR2 (10),
+    NIP_P VARCHAR2 (20),
+    CONSTRAINT Pengawasan_PK PRIMARY KEY (id_pengawasan) ENABLE,
+    CONSTRAINT idTransaksi_FK FOREIGN KEY (id_transaksi)
+    REFERENCES TRANSAKSI ON DELETE CASCADE ENABLE,
+    CONSTRAINT NIP_P_FK FOREIGN KEY (NIP_P)
+    REFERENCES PEGAWAI ON DELETE CASCADE ENABLE 
+);
+CREATE TABLE MEMBAYAR (
+    id_pembayaran VARCHAR2 (20) NOT NULL,
+    id_membeli VARCHAR (10),
+    tanggal_membayar DATE,
+    total_bayar NUMBER,
+    point NUMBER,
+    CONSTRAINT idPembayaran_PK PRIMARY KEY (id_pembayaran) ENABLE,
+    CONSTRAINT idMembeli_FK FOREIGN KEY (id_membeli)
+    REFERENCES MEMBELI ON DELETE CASCADE ENABLE
+);
+CREATE TABLE DETIL_MEMBAYAR (
+    id_pembayaran VARCHAR2 (20),
+    NIP_P VARCHAR2 (20),
+    jumlah_item NUMBER,
+    CONSTRAINT idPembayaran_FK FOREIGN KEY (id_pembayaran)
+    REFERENCES MEMBAYAR ON DELETE CASCADE ENABLE,
+    CONSTRAINT NIP_FK FOREIGN KEY (NIP_P)
+    REFERENCES PEGAWAI ON DELETE CASCADE ENABLE
+);
+CREATE TABLE Manager (
+    id_manager VARCHAR2 (10) NOT NULL, 
+    nip VARCHAR2 (20),
+    nama_manager VARCHAR2 (20),
+    alamat VARCHAR2 (20),
+    no_telp VARCHAR2 (20),
+    CONSTRAINT idManager_PK PRIMARY KEY (id_manager) ENABLE
+);
+CREATE TABLE SlipGaji (
+    kode_slip VARCHAR2 (20) NOT NULL,
+    NIP_P VARCHAR (20),
+    id_manager VARCHAR2 (10),
+    tanggal DATE,
+    jumlah_gaji NUMBER,
+    CONSTRAINT SlipGaji_PK PRIMARY KEY (kode_slip) ENABLE,
+    CONSTRAINT SlipGaji_FK1 FOREIGN KEY (id_manager)
+    REFERENCES MANAGER (id_manager) on delete cascade ENABLE,
+    CONSTRAINT SlipGaji_FK2 FOREIGN KEY (NIP_P)
+    REFERENCES PEGAWAI (NIP_P) on delete cascade ENABLE
+);
+alter session set nls_date_format= 'dd-mm-yyyy';
